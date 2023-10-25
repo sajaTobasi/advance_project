@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mysql = require('mysql')
 const datacollection = require("./datacollection");
-//const employers = require("./employers");
+const report = require("./report");
 //const jobseekers = require("./jobseekers");
 //const applications = require('./applications');
 
