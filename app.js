@@ -1,10 +1,10 @@
-const express = require('express')
+const express=require('express')
 const bodyParser = require('body-parser')
 const mysql = require('mysql')
 const datacollection = require("./datacollection");
 const report = require("./report");
-
 const educationalResourcesRouter = require("./educationalResourcesRouter");
+//const applications = require('./applications');
 
 
 const app = express()
@@ -21,16 +21,14 @@ const pool  = mysql.createPool({
 })
 app.use(express.json()); // New
 
-app.use(express.urlencoded({extended: false})); 
-
+app.use(express.urlencoded({extended: false})); // New
 app.use("/data",datacollection(pool))
-
+app.use("/report",report(pool))
 app.use("/resource", educationalResourcesRouter(pool))
+//app.use('/applications', applications(pool));
+
 
 
 app.use("*", (req,res) => res.send({message: `Invalid end point.`}))
-
+// Listen on enviroment port or 5000
 app.listen(port, () => console.log(`Listening on port ${port}`))
-
-
-
