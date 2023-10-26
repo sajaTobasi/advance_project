@@ -3,8 +3,8 @@ const bodyParser = require('body-parser')
 const mysql = require('mysql')
 const datacollection = require("./datacollection");
 const report = require("./report");
-//const jobseekers = require("./jobseekers");
-//const applications = require('./applications');
+
+const educationalResourcesRouter = require("./educationalResourcesRouter");
 
 
 const app = express()
@@ -21,17 +21,15 @@ const pool  = mysql.createPool({
 })
 app.use(express.json()); // New
 
-app.use(express.urlencoded({extended: false})); // New
+app.use(express.urlencoded({extended: false})); 
 
 app.use("/data",datacollection(pool))
-//app.use("/employers",employers(pool))
-//app.use("/seekers", jobseekers(pool))
-//app.use('/applications', applications(pool));
 
+app.use("/resource", educationalResourcesRouter(pool))
 
 
 app.use("*", (req,res) => res.send({message: `Invalid end point.`}))
-// Listen on enviroment port or 5000
+
 app.listen(port, () => console.log(`Listening on port ${port}`))
 
 
