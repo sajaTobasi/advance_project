@@ -4,7 +4,10 @@ const mysql = require('mysql')
 const datacollection = require("./datacollection");
 const report = require("./report");
 const educationalResourcesRouter = require("./educationalResourcesRouter");
-//const applications = require('./applications');
+const userprofile = require("./userprofile");
+const enviromentalart = require("./enviromentalart");
+
+
 
 
 const app = express()
@@ -22,10 +25,11 @@ const pool  = mysql.createPool({
 app.use(express.json()); // New
 
 app.use(express.urlencoded({extended: false})); // New
-app.use("/data",datacollection(pool))
-app.use("/report",report(pool))
-app.use("/resource", educationalResourcesRouter(pool))
-//app.use('/applications', applications(pool));
+app.use("/data",datacollection(pool));
+app.use("/report",report(pool));
+app.use("/resource", educationalResourcesRouter(pool));
+app.use("/user", userprofile(pool));
+app.use("/alart", enviromentalart(pool));
 
 
 
