@@ -29,7 +29,8 @@ CREATE TABLE datacollection (
     humidity FLOAT,
     waterquality FLOAT,
     biodiversitymetrics FLOAT,
-    submissiontime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    submissiontime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total FLOAT,
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -50,7 +51,7 @@ VALUES (NULL, '1', '1', '2.5', '3.4', '2.6', '2.5', '1', current_timestamp());
 
 CREATE TABLE SustainabilityScore (
     UserID INT PRIMARY KEY,
-    TotalPoints INT,  
+    TotalPoints FLOAT,  
     LastUpdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -99,6 +100,7 @@ CREATE TABLE UserProfiles (
     Email VARCHAR(100) NOT NULL,
     Location VARCHAR(100),
     Interests VARCHAR(255),
+    passward VARCHAR(100),
     ContributionPoints INT,
     SustainabilityScoreID INT,
     UNIQUE (Username, Email)

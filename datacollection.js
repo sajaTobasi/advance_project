@@ -3,8 +3,16 @@ const { Router } = require('express');
 const datacollection = (pool) => {
   const router = Router();
 
+  const authenticateUser = (req, res, next) => {
+    if (req.session.isAuthenticated) {
+      return next();
+    } else {
+      res.status(401).send('Please login');
+    }
+  };
+
  // update any data by data-id
-  router.put('/update/:id', async (req, res, next) => {
+  router.put('/update/:id',authenticateUser, async (req, res, next) => {
     const { id } = req.params;
     const dataToUpdate = req.body;
 
@@ -130,7 +138,7 @@ const datacollection = (pool) => {
 
 
   // Insert an DataCollection
-  router.post('/', (req, res) => {
+  router.post('/', authenticateUser,(req, res) => {
     const { user_id, resource_id, airquality, temperature, humidity, waterquality, biodiversitymetrics } = req.body;
     const query = 'INSERT INTO datacollection (user_id, resource_id, airquality, temperature, humidity, waterquality, biodiversitymetrics,total) VALUES (?, ?, ?,?, ?, ?, ?, ?)';
     const sustainabilityScoreQuery = `
@@ -312,7 +320,7 @@ const datacollection = (pool) => {
       });
 
       // update one data by user-id
-      router.put('/:data_id', (req, res) => {
+      router.put('/:data_id', authenticateUser, (req, res) => {
         const data_id = req.params.data_id;
         const {airquality, temperature, humidity, waterquality, biodiversitymetrics,user_id } = req.body;
         const query1 = 'SELECT total, user_id FROM datacollection WHERE data_id = ?';
@@ -384,7 +392,7 @@ const datacollection = (pool) => {
     
 
       // Get one data by user-id
-      router.delete('/:data_id', (req, res) => {
+      router.delete('/:data_id', authenticateUser, (req, res) => {
         const data_id = req.params.data_id;
         const query = 'DELETE FROM datacollection WHERE data_id = ?';
         const query1 = 'SELECT total, user_id FROM datacollection WHERE data_id = ?';
