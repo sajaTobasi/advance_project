@@ -186,9 +186,9 @@ router.delete('/d/:UserID', (req, res) => {
  // update data by AlertID
 router.put('/:AlertID', (req, res) => {
     const AlertID = req.params.AlertID;
-    const { UserID, AlertMessage, Threshold,Triggered_At} = req.body;
+    const { UserID, AlertMessage, Threshold} = req.body;
     
-    const query = 'UPDATE environmentalalerts SET UserID = ?, AlertMessage = ?, Threshold = ?, Triggered_At = ? WHERE AlertID = ?';
+    const query = 'UPDATE environmentalalerts SET UserID = ?, AlertMessage = ?, Threshold = ? WHERE AlertID = ?';
 
     pool.getConnection((err, connection) => {
         if (err) {
@@ -197,7 +197,7 @@ router.put('/:AlertID', (req, res) => {
             return;
         }
 
-        connection.query(query, [UserID, AlertMessage, Threshold,Triggered_At, AlertID], (err, result) => {
+        connection.query(query, [UserID, AlertMessage, Threshold, AlertID], (err, result) => {
             connection.release();
 
             if (err) {
@@ -233,7 +233,7 @@ router.put('/up/:id', async (req, res, next) => {
         }
 
         const selectQuery = `
-        SELECT * FROM cenvironmentalalerts 
+        SELECT * FROM environmentalalerts 
         WHERE AlertID= ?;
     `;
     pool.getConnection((err, connection) => {
