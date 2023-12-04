@@ -4,7 +4,7 @@ const router = Router();
 
 // Search for report
 router.get('/search', (req, res) => {
-    const { UserID, ReportID } = req.query;
+    const { UserID, ReportID } = req.body;
     const query = `
         SELECT *
         FROM communityreports
@@ -30,9 +30,9 @@ router.get('/search', (req, res) => {
         });
     });
 });
-
 //get all reports
 router.get('/', (req, res) => {
+   // console.log("");
     const query = 'SELECT * FROM communityreports';
 
     pool.getConnection((err, connection) => {
@@ -108,8 +108,10 @@ router.get('/u/:UserID', (req, res) => {
     });
 });
 
+
 // Insert an Report
 router.post('/', (req, res) => {
+
     const { UserID , ReportType, Description } = req.body;
     const query = 'INSERT INTO communityreports (UserID , ReportType, Description) VALUES (?, ?, ?)';
     pool.getConnection((err, connection) => {
@@ -211,7 +213,7 @@ router.put('/:ReportID', (req, res) => {
             }
 
             res.status(200);
-            res.json(result);
+            res.json("Done");
         });
     });
 });
@@ -252,9 +254,8 @@ router.put('/up/:id', async (req, res, next) => {
         }
         res.json(rows);
         });
+        
     });
-
-       // res.json(rows);
     });
     });
 

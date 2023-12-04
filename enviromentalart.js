@@ -3,7 +3,7 @@ const enviromentalart = (pool) => {
 const router = Router();
 // Search for alart
 router.get('/search', (req, res) => {
-    const { UserID, AlertID } = req.query;
+    const { UserID, AlertID } = req.body;
     const query = `
         SELECT *
         FROM environmentalalerts
@@ -151,7 +151,7 @@ router.delete('/:AlertID', (req, res) => {
         }
 
         res.status(200);
-        res.json(result);
+        res.json("Done");
     });
     });
 });
@@ -178,13 +178,13 @@ router.delete('/d/:UserID', (req, res) => {
         }
 
         res.status(200);
-        res.json(result);
+        res.json("Done");
     });
     });
 });
 //UserID, AlertMessage, Threshold,Triggered_At
  // update data by AlertID
- router.put('/:AlertID', (req, res) => {
+router.put('/:AlertID', (req, res) => {
     const AlertID = req.params.AlertID;
     const { UserID, AlertMessage, Threshold,Triggered_At} = req.body;
     
@@ -207,7 +207,7 @@ router.delete('/d/:UserID', (req, res) => {
             }
 
             res.status(200);
-            res.json(result);
+            res.json("Done");
         });
     });
 });

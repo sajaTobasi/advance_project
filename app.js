@@ -8,6 +8,7 @@ const educationalResourcesRouter = require('./educationalResourcesRouter');
 const userprofile = require('./userprofile');
 const enviromentalart = require('./enviromentalart');
 const login = require('./login');
+const signup = require('./signup');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -45,12 +46,14 @@ const authenticateUser = (req, res, next) => {
 
 
 
-app.use('/data', datacollection(pool));
+
 app.use('/report',authenticateUser, report(pool));
 app.use('/resource', authenticateUser, educationalResourcesRouter(pool));
 app.use('/user', authenticateUser, userprofile(pool));
 app.use('/alart', authenticateUser, enviromentalart(pool));
+app.use('/data', datacollection(pool));
 app.use('/login', login(pool));
+app.use('/signup', signup(pool));
 
 app.use('*', (req, res) => res.send({ message: 'Invalid endpoint.' }));
 
