@@ -306,9 +306,9 @@ const datacollection = (pool) => {
       // update one data by user-id
       router.put('/:data_id', authenticateUser, (req, res) => {
         const data_id = req.params.data_id;
-        const {city,temperature, humidity, wind_speed, wind_deg, pressure,timestamp,user_id } = req.body;
+        const {city,temperature, humidity, wind_speed, wind_deg, pressure,user_id } = req.body;
         //const query1 = 'SELECT total, user_id FROM datacollection WHERE data_id = ?';
-        const query = 'UPDATE datacollection SET city = ?, temperature = ?, humidity = ?, wind_speed = ?, wind_deg = ?, pressure = ? , timestamp = ? WHERE data_id = ?';
+        const query = 'UPDATE datacollection SET city = ?, temperature = ?, humidity = ?, wind_speed = ?, wind_deg = ?, pressure = ? , timestamp = NOW() WHERE data_id = ?';
         /*const sustainabilityScoreQuery = `
         UPDATE SustainabilityScore ss
         SET TotalPoints = COALESCE(?, 0) + COALESCE(ss.TotalPoints, 0)
@@ -333,7 +333,7 @@ const datacollection = (pool) => {
                 res.status(404).send('Data not found');
               } else {*/
                // const total=airquality+ temperature+ humidity+ waterquality+ biodiversitymetrics;
-            connection.query(query, [ city,temperature, humidity, wind_speed, wind_deg, pressure,NOW(),data_id], (err, result) => {
+            connection.query(query, [ city,temperature, humidity, wind_speed, wind_deg, pressure,data_id], (err, result) => {
               
                 if (err) {
                     console.log(err);
@@ -367,7 +367,7 @@ const datacollection = (pool) => {
                     res.json({ result: i, message: `Data with ID: ${result.insertId} has been submitted.` });
                   });
                 });*/
-                res.json({ result: i, message: `Data with ID: ${result.insertId} has been submitted.` });
+                res.json({  message: `Data with ID: has been submitted.` });
                 });
      //   }
      // }); 
