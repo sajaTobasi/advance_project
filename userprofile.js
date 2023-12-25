@@ -135,12 +135,12 @@ router.delete('/:UserID', (req, res) => {
     });
 });
 //////////////
-//Username , Email, Location ,Interests,ContributionPoints,SustainabilityScoreID
+//Username , Email, Location ,Interests,ContributionPoints
 router.put('/:UserID', (req, res) => {
     const UserID = req.params.UserID;
-    const { Username, Email, Location,Interests,ContributionPoints,SustainabilityScoreID} = req.body;
+    const { Username, Email, Location,Interests,ContributionPoints} = req.body;
     
-    const query = 'UPDATE userprofiles SET Username = ?, Email = ?, Location = ? ,Interests = ?,ContributionPoints = ?,SustainabilityScoreID = ? WHERE UserID = ?';
+    const query = 'UPDATE userprofiles SET Username = ?, Email = ?, Location = ? ,Interests = ?,ContributionPoints = ? WHERE UserID = ?';
 
     pool.getConnection((err, connection) => {
         if (err) {
@@ -149,7 +149,7 @@ router.put('/:UserID', (req, res) => {
             return;
         }
 
-        connection.query(query, [Username, Email, Location, Interests,ContributionPoints,SustainabilityScoreID,UserID], (err, result) => {
+        connection.query(query, [Username, Email, Location, Interests,ContributionPoints,UserID], (err, result) => {
             connection.release();
 
             if (err) {

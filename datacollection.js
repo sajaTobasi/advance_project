@@ -53,27 +53,6 @@ const datacollection = (pool) => {
        // res.json(rows);
       });
     });
-
- /*   try {
-      const [results] = await pool.query(updateQuery, [dataToUpdate, id]);
-      console.log("hg");
-      if (results.affectedRows === 0) {
-        return res.status(404).json({ message: `No record found for id ${id}` });
-      }
-      console.log("hg");
-      // Optionally fetch the updated record after the update if needed
-      const selectQuery = `
-        SELECT * FROM datacollection 
-        WHERE data_id= ?;
-      `;
-      console.log("hg");
-      const [selectedResults] = await pool.query(selectQuery, [id]);
-      console.log("hg");
-      res.status(200).json({ data: selectedResults[0] });
-    } catch (error) {
-      return next(error);
-    }
-    */
   });
 //////////////////////////////////////////////////////////////////////
   // Get All SustainabilityScore
@@ -108,7 +87,7 @@ const datacollection = (pool) => {
   });
   
    // Search for data
-   router.get('/search', (req, res) => {
+  router.get('/search', (req, res) => {
     const { user_id, resource_id, humidity } = req.body;
     
     const query = `
@@ -139,8 +118,13 @@ const datacollection = (pool) => {
 
   // Insert an DataCollection
   router.post('/', authenticateUser,(req, res) => {
-    const { user_id, resource_id, airquality, temperature, humidity, waterquality, biodiversitymetrics } = req.body;
-    const query = 'INSERT INTO datacollection (user_id, resource_id, airquality, temperature, humidity, waterquality, biodiversitymetrics,total) VALUES (?, ?, ?,?, ?, ?, ?, ?)';
+
+    const { user_id, resource_id,city,temperature, humidity,wind_speed,wind_deg,pressure } = req.body;
+    const query = 'INSERT INTO datacollection (user_id, resource_id, city,temperature, humidity, wind_speed, wind_deg, pressure,timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())';
+   // const query = 'INSERT INTO weather_data (city,temperature, humidity, wind_speed, wind_deg, pressure,timestamp) VALUES (?, ?, ?, ?, ?, ?, NOW())';
+   // const values = [weatherData.city,weatherData.temperature, weatherData.humidity,weatherData.wind_speed,weatherData.wind_deg,weatherData.pressure];
+  
+
     const sustainabilityScoreQuery = `
       UPDATE SustainabilityScore ss
       SET TotalPoints = COALESCE(?, 0) + COALESCE(ss.TotalPoints, 0)
@@ -158,9 +142,9 @@ const datacollection = (pool) => {
         res.status(500).send('Internal Server Error 1');
         return;
       }
-      const total = airquality + temperature + humidity + waterquality + biodiversitymetrics;
+    //  const total = airquality + temperature + humidity + waterquality + biodiversitymetrics;
       const one=1;
-      connection.query(query, [user_id, resource_id, airquality, temperature, humidity, waterquality, biodiversitymetrics,total], (err, result) => {
+      connection.query(query, [user_id, resource_id,city,temperature, humidity,wind_speed,wind_deg,pressure], (err, result) => {
         connection.release();
   
         if (err) {
@@ -171,7 +155,7 @@ const datacollection = (pool) => {
         
         
         
-        connection.query(sustainabilityScoreQuery, [total, user_id], (err) => {
+        connection.query(sustainabilityScoreQuery, [one, user_id], (err) => {
           if (err) {
             connection.rollback(() => {
               console.log(err);
@@ -188,7 +172,7 @@ const datacollection = (pool) => {
                       return;
                     }});
   
-          res.json({ result: total, message: `Data with ID: ${result.insertId} has been submitted.` });
+          res.json({ message: `Data with ID: ${result.insertId} has been submitted.` });
         });
       });
     });
@@ -248,7 +232,7 @@ const datacollection = (pool) => {
 
 
    // Get one data by user-id
-   router.get('/user/:user_id', (req, res) => {
+  router.get('/user/:user_id', (req, res) => {
     const user_id = req.params.user_id;
     const query = 'SELECT * FROM datacollection WHERE user_id = ?';
     const query1 = 'SELECT TotalPoints FROM SustainabilityScore WHERE UserID = ?';
@@ -322,14 +306,14 @@ const datacollection = (pool) => {
       // update one data by user-id
       router.put('/:data_id', authenticateUser, (req, res) => {
         const data_id = req.params.data_id;
-        const {airquality, temperature, humidity, waterquality, biodiversitymetrics,user_id } = req.body;
-        const query1 = 'SELECT total, user_id FROM datacollection WHERE data_id = ?';
-        const query = 'UPDATE datacollection SET airquality = ?, temperature = ?, humidity = ?, waterquality = ?, biodiversitymetrics = ?, total = ? WHERE data_id = ?';
-        const sustainabilityScoreQuery = `
+        const {city,temperature, humidity, wind_speed, wind_deg, pressure,timestamp,user_id } = req.body;
+        //const query1 = 'SELECT total, user_id FROM datacollection WHERE data_id = ?';
+        const query = 'UPDATE datacollection SET city = ?, temperature = ?, humidity = ?, wind_speed = ?, wind_deg = ?, pressure = ? , timestamp = ? WHERE data_id = ?';
+        /*const sustainabilityScoreQuery = `
         UPDATE SustainabilityScore ss
         SET TotalPoints = COALESCE(?, 0) + COALESCE(ss.TotalPoints, 0)
         WHERE ss.UserID = ?;
-      `;
+      `;*/
 
         pool.getConnection((err, connection) => {
             if (err) {
@@ -337,7 +321,7 @@ const datacollection = (pool) => {
                 res.status(500).send('Internal Server Error1');
                 return;
             }
-            connection.query(query1, [data_id], (err, ret) => {
+           /* connection.query(query1, [data_id], (err, ret) => {
         
               if (err) {
                 console.log(err);
@@ -347,21 +331,21 @@ const datacollection = (pool) => {
         
               if (ret.length === 0) {
                 res.status(404).send('Data not found');
-              } else {
-                const total=airquality+ temperature+ humidity+ waterquality+ biodiversitymetrics;
-            connection.query(query, [ airquality, temperature, humidity, waterquality, biodiversitymetrics,total ,data_id], (err, result) => {
+              } else {*/
+               // const total=airquality+ temperature+ humidity+ waterquality+ biodiversitymetrics;
+            connection.query(query, [ city,temperature, humidity, wind_speed, wind_deg, pressure,NOW(),data_id], (err, result) => {
               
                 if (err) {
                     console.log(err);
                     res.status(500).send('Internal Server Error3');
                     return;
                 }
-                console.log(total);
+               /* console.log(total);
                 console.log(ret[0].total);
                 const i =  total -  ret[0].total;
-                console.log(i);
+                console.log(i);*/
 
-                connection.query(sustainabilityScoreQuery, [i, ret[0].user_id], (err) => {
+               /* connection.query(sustainabilityScoreQuery, [i, ret[0].user_id], (err) => {
                   if (err) {
                     connection.rollback(() => {
                       console.log(err);
@@ -382,11 +366,11 @@ const datacollection = (pool) => {
                     // If there are no errors, the transaction is committed, and the update is complete
                     res.json({ result: i, message: `Data with ID: ${result.insertId} has been submitted.` });
                   });
+                });*/
+                res.json({ result: i, message: `Data with ID: ${result.insertId} has been submitted.` });
                 });
-                
-                });
-        }
-      }); 
+     //   }
+     // }); 
         });
     });
     
@@ -395,7 +379,7 @@ const datacollection = (pool) => {
       router.delete('/:data_id', authenticateUser, (req, res) => {
         const data_id = req.params.data_id;
         const query = 'DELETE FROM datacollection WHERE data_id = ?';
-        const query1 = 'SELECT total, user_id FROM datacollection WHERE data_id = ?';
+        const query1 = 'SELECT user_id FROM datacollection WHERE data_id = ?';
         const sustainabilityScoreQuery = `
         UPDATE SustainabilityScore ss
         SET TotalPoints = COALESCE(?, 0) + COALESCE(ss.TotalPoints, 0)
@@ -424,10 +408,10 @@ const datacollection = (pool) => {
             if (ret.length === 0) {
               res.status(404).send('Data not found');
             } else {
-              const i = 0-ret[0].total;
+              //const i = 0-ret[0].total;
               const one = 0-1;
              // console.log(i);
-              connection.query(sustainabilityScoreQuery, [i, ret[0].user_id], (err) => {
+              connection.query(sustainabilityScoreQuery, [one, ret[0].user_id], (err) => {
                 if (err) {
                   connection.rollback(() => {
                     console.log(err);
@@ -499,8 +483,6 @@ const datacollection = (pool) => {
       });
     });
 
-
-     
 
 
   // Add more routes as needed...
